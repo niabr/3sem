@@ -47,7 +47,7 @@ void *thread(void *arg){
 	if(y<=f(x))
 	    ( *((int*)arg))++;
 	}
-    printf("%d\n",i);
+    //printf("%d\n",i);
     return NULL;
 }
 
