@@ -12,3 +12,61 @@
   б*) определить, при каких n' (насколько больших) накладные расходы от использования многопоточности [и синхронизации, если она имела место]
   превосходят преимущества их использования.
 */
+
+#include<stdlib.h>
+#include<fcntl.h>
+#include<sys/types.h>
+#include<time.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<sys/shm.h>
+#include<pthread.h>
+#include<math.h>
+#define N 100000000
+
+int n;
+
+double f(double x){
+    double y = sin(x);
+    return y;
+}
+
+double F(double x){
+    double y = -cos(x)+1;
+    return y;
+}
+
+
+void *thread(void *arg){
+    int i;
+    double x;
+    double y;
+    for(i=0;i<=N/n;i++){
+	x=(double)rand()/RAND_MAX;
+	y=(double)rand()/RAND_MAX;
+	if(y<=f(x))
+	    ( *((int*)arg))++;
+	}
+    printf("%d\n",i);
+    return NULL;
+}
+
+int main(){
+    int i;
+    scanf("%d",&n);
+    int fd = shmget(IPC_PRIVATE,n*sizeof(int), 0666);
+    int *p = shmat(fd,NULL,0);
+    srand(time(NULL));
+    pthread_t thid;
+    for(i=0;i<n;i++){
+	pthread_create(&thid,(pthread_attr_t *)NULL,thread,p+i);
+    }
+    pthread_join(thid, (void **)NULL);
+    int sum=0;
+    for(i=0;i<n;i++) sum+=p[i];
+    double ans = (double)sum/N;
+    printf("Divergence:%lf\n",ans-F(1));
+    
+    shmdt(p);
+    return 0;
+}
