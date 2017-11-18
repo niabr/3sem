@@ -42,11 +42,15 @@ void *thread(void *arg){
 	if(y<=f(x))
 	    ( *((int*)arg))++;
 	}
+<<<<<<< HEAD
 //    printf("%d\n",i);
     /* printf("%d\n",time(NULL)); */
 
     pthread_exit(NULL);
     
+=======
+    //printf("%d\n",i);
+>>>>>>> 8bca839978d57093d5b1f80f45baf68338e11f8c
     return NULL;
 }
 
