@@ -22,7 +22,8 @@
 #include<sys/shm.h>
 #include<pthread.h>
 #include<math.h>
-#define N 100000000
+#include<string.h>
+#define N 10000000
 
 int n;
 
@@ -30,12 +31,6 @@ double f(double x){
     double y = sin(x);
     return y;
 }
-
-double F(double x){
-    double y = -cos(x)+1;
-    return y;
-}
-
 
 void *thread(void *arg){
     int i;
@@ -47,25 +42,34 @@ void *thread(void *arg){
 	if(y<=f(x))
 	    ( *((int*)arg))++;
 	}
-    printf("%d\n",i);
+//    printf("%d\n",i);
+    /* printf("%d\n",time(NULL)); */
+
+    pthread_exit(NULL);
+    
     return NULL;
 }
 
-int main(){
+int main(int argc, char **argv){
     int i;
-    scanf("%d",&n);
-    int fd = shmget(IPC_PRIVATE,n*sizeof(int), 0666);
+    n=atoi(argv[1]);
+    /* printf("%d\n",time(NULL)); */
+    
+    //scanf("%d",&n);
+    int fd = shmget(ftok("task.c",1),n*sizeof(int), 0666|IPC_CREAT);
     int *p = shmat(fd,NULL,0);
     srand(time(NULL));
-    pthread_t thid;
-    for(i=0;i<n;i++){
-	pthread_create(&thid,(pthread_attr_t *)NULL,thread,p+i);
+    pthread_t thid[100];
+    for(i=0;i<n-1;i++){
+	pthread_create(&thid[i],(pthread_attr_t *)NULL,thread,p+i);
     }
-    pthread_join(thid, (void **)NULL);
-    int sum=0;
-    for(i=0;i<n;i++) sum+=p[i];
-    double ans = (double)sum/N;
-    printf("Divergence:%lf\n",ans-F(1));
+    /* for(i=0;i<n;i++) */
+    /* 	pthread_join(thid[i], (void **)NULL); */
+    /* int sum=0; */
+    /* for(i=0;i<n;i++) sum+=p[i]; */
+    /* double ans = (double)sum/N; */
+    /* printf("Divergence:%lf\n",ans-F(1)); */
+    thread(p+i);
     
     shmdt(p);
     return 0;
