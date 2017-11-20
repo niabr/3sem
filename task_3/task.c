@@ -42,15 +42,15 @@ void *thread(void *arg){
 	if(y<=f(x))
 	    ( *((int*)arg))++;
 	}
-<<<<<<< HEAD
+
 //    printf("%d\n",i);
     /* printf("%d\n",time(NULL)); */
 
     pthread_exit(NULL);
     
-=======
+
     //printf("%d\n",i);
->>>>>>> 8bca839978d57093d5b1f80f45baf68338e11f8c
+
     return NULL;
 }
 
@@ -60,7 +60,7 @@ int main(int argc, char **argv){
     /* printf("%d\n",time(NULL)); */
     
     //scanf("%d",&n);
-    int fd = shmget(ftok("task.c",1),n*sizeof(int), 0666|IPC_CREAT);
+    int fd = shmget(ftok("task.c",1),n*sizeof(int), 0666|IPC_CREAT|IPC_EXCL);
     int *p = shmat(fd,NULL,0);
     srand(time(NULL));
     pthread_t thid[100];
