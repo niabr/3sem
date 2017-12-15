@@ -20,7 +20,10 @@ int main(int argc, char** argv){
     key=ftok("task.c",1);
     id=msgget(key,0666);
     fd=open(argv[1],O_WRONLY|O_CREAT,0666);
-
+    if(fd<0){
+	puts("Cannot open file!");
+	exit(-1);
+    }
     while(count!=0){
 	count=msgrcv(id,&buf,8192,0,0);
 	write(fd,buf.mtext,count);
